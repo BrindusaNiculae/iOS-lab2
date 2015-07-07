@@ -14,13 +14,21 @@
 @property(weak, nonatomic) IBOutlet UIButton *settingsButton;
 @property(weak, nonatomic) IBOutlet UIView *profileView;
 @property(weak, nonatomic) IBOutlet UIView *settingsView;
+@property(strong, nonatomic) Profile *profile;
+@property(weak, nonatomic) IBOutlet UITextField *firstNameTextField;
+@property(weak, nonatomic) IBOutlet UITextField *lastNameTextField;
+@property(weak, nonatomic) IBOutlet UILabel *firstNameLabel;
+@property(weak, nonatomic) IBOutlet UILabel *lastNameLabel;
+@property(weak, nonatomic) IBOutlet UIImageView *profileImage;
 
 @end
 
-@implementation ViewController
+@implementation ViewController 
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.profile = [[Profile alloc] init];
+    
     // Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -45,5 +53,102 @@
         }
     }
 }
+
+-(IBAction) dateSet:(UIDatePicker *)sender {
+    if(![sender isSelected]) {
+        self.profile.birthday = sender.date;
+    }
+}
+
+-(IBAction) imageSet:(id)sender {
+    UIActionSheet *popup = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:
+                            @"Take photo",
+                            @"Select photo from galery",
+                            nil];
+    [popup showInView:self.view];
+}
+
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+
+    switch(buttonIndex) {
+        case 0:
+        {
+            [self uploadPhotoFrom:UIImagePickerControllerSourceTypeCamera];
+        }
+            break;
+        case 1:
+        {
+            [self uploadPhotoFrom:UIImagePickerControllerSourceTypePhotoLibrary];
+        }
+        default:
+            break;
+    }
+}
+
+-(void) uploadPhotoFrom:(UIImagePickerControllerSourceType) sourceType {
+    UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+    
+    imagePicker.delegate = self;
+    imagePicker.sourceType = sourceType;
+    [self presentViewController:imagePicker animated:YES completion:nil];
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    if([textField isEqual:_firstNameTextField]) {
+        self.profile.firstName = textField.text;
+    } else if ([textField isEqual: _lastNameTextField]) {
+         self.profile.lastName = textField.text;
+  }
+    }
+
+#pragma mark UIImagePickerControllerDelegate
+
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    NSString *media = info[UIImagePickerControllerMediaType];
+    [self dismissViewControllerAnimated:YES completion:nil];
+    
+    if([media isEqualToString:(NSString *)kUTTypeImage]) {
+        _profile.photo = info[UIImagePickerControllerOriginalImage];
+        _profileImage.image = _profile.photo;
+    }
+}
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    UIAlertView *theAlert = [[UIAlertView alloc] initWithTitle:@"Alert"
+                                                       message:@"Set all text fields!"
+                                                      delegate:self
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil];
+
+    
+    if([textField isEqual:_firstNameTextField]) {
+        [_lastNameTextField becomeFirstResponder];
+    } else if ([textField isEqual: _lastNameTextField]) {
+        [_lastNameTextField resignFirstResponder];
+        if([self.profile.firstName length] == 0) {
+            [theAlert show];
+            _firstNameLabel.textColor = [UIColor redColor];
+            
+        }
+        if ([self.profile.lastName length] == 0) {
+            [theAlert show];
+            _lastNameLabel.textColor = [UIColor redColor];
+        }
+    }
+    
+    return YES;
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    if([textField isEqual:_firstNameTextField]) {
+        _firstNameLabel.textColor = [UIColor blackColor];
+        
+    }
+    if ([textField isEqual: _lastNameTextField]) {
+        _lastNameLabel.textColor = [UIColor blackColor];
+    }
+    return YES;
+}
+
 
 @end

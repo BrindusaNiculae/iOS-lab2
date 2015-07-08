@@ -20,6 +20,9 @@
 @property(weak, nonatomic) IBOutlet UILabel *firstNameLabel;
 @property(weak, nonatomic) IBOutlet UILabel *lastNameLabel;
 @property(weak, nonatomic) IBOutlet UIImageView *profileImage;
+@property(weak, nonatomic) IBOutlet UIView *indicator;
+@property(weak, nonatomic) IBOutlet NSLayoutConstraint *indicatorPosition;
+
 
 @end
 
@@ -40,12 +43,23 @@
 - (IBAction) buttonPressed:(UIButton *)sender {
     
     if(![sender isSelected]) {
+
         if ([sender isEqual:_profileButton]) {
+            _indicatorPosition.constant = 0;
+            [UIView animateWithDuration:0.3
+                             animations:^{
+                                 [self.view layoutIfNeeded]; // Called on parent view
+                             }];
             [_profileView setHidden:NO];
             [_settingsView setHidden:YES];
             [_profileButton setSelected:YES];
             [_settingsButton setSelected:NO];
         } else if ([sender isEqual:_settingsButton]) {
+            _indicatorPosition.constant += sender.frame.size.width;
+            [UIView animateWithDuration:0.3
+                             animations:^{
+                                 [self.view layoutIfNeeded]; // Called on parent view
+                             }];
             [_profileView setHidden:YES];
             [_settingsView setHidden:NO];
             [_profileButton setSelected:NO];

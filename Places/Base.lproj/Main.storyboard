@@ -260,6 +260,8 @@
                     <connections>
                         <outlet property="firstNameLabel" destination="tIR-PQ-Yaj" id="uy5-LX-Ihq"/>
                         <outlet property="firstNameTextField" destination="d9P-gy-LQQ" id="FQ6-QW-hph"/>
+                        <outlet property="indicator" destination="SkB-hb-P8Q" id="4lx-XR-RdT"/>
+                        <outlet property="indicatorPosition" destination="xc4-40-Enc" id="bYK-CE-iUG"/>
                         <outlet property="lastNameLabel" destination="Xnw-Sv-jl8" id="7il-6U-wgT"/>
                         <outlet property="lastNameTextField" destination="DUc-Ce-M05" id="4JX-6r-QDw"/>
                         <outlet property="profileButton" destination="r72-14-ksy" id="nzj-vK-VPj"/>

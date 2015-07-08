@@ -45,27 +45,18 @@
     if(![sender isSelected]) {
 
         if ([sender isEqual:_profileButton]) {
-            _indicatorPosition.constant = 0;
-            [UIView animateWithDuration:0.3
-                             animations:^{
-                                 [self.view layoutIfNeeded]; // Called on parent view
-                             }];
             [_profileView setHidden:NO];
             [_settingsView setHidden:YES];
             [_profileButton setSelected:YES];
             [_settingsButton setSelected:NO];
         } else if ([sender isEqual:_settingsButton]) {
-            _indicatorPosition.constant += sender.frame.size.width;
-            [UIView animateWithDuration:0.3
-                             animations:^{
-                                 [self.view layoutIfNeeded]; // Called on parent view
-                             }];
             [_profileView setHidden:YES];
             [_settingsView setHidden:NO];
             [_profileButton setSelected:NO];
             [_settingsButton setSelected:YES];
         }
     }
+    [self updateIndicatorPositionWithDuration:0.3];
 }
 
 -(IBAction) dateSet:(UIDatePicker *)sender {
@@ -164,5 +155,22 @@
     return YES;
 }
 
+-(void) didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    [self updateIndicatorPositionWithDuration:0];
+}
+
+-(void) updateIndicatorPositionWithDuration:(CGFloat) duration {
+    if([_profileButton isSelected]) {
+        _indicatorPosition.constant = 0;
+    } else if ([_settingsButton isSelected]) {
+        _indicatorPosition.constant = _settingsButton.frame.size.width;
+    }
+    [UIView animateWithDuration:duration
+                     animations:^{
+                         [self.view layoutIfNeeded]; // Called on parent view
+                     }];
+
+    
+}
 
 @end

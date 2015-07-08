@@ -32,13 +32,58 @@
     [super viewDidLoad];
     self.profile = [[Profile alloc] init];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide) name:UIKeyboardWillHideNotification object:nil];
+    
+    UITapGestureRecognizer *hideKeyboard = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+    [self.view addGestureRecognizer:hideKeyboard];
+    
     // Do any additional setup after loading the view, typically from a nib.
+}
+
+-(void)dismissKeyboard {
+    [self.view endEditing:YES];
+}
+
+-(void)keyboardWillShow:(NSNotification *)notification {
+    
+    
+    CGRect keyboard = [[notification.userInfo
+                             objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    CGRect frame = self.view.frame;
+    
+    if([_firstNameTextField isFirstResponder]) {
+        frame.origin.y = -[self adjustFrameOriginOfViewFromKeyboard:keyboard andCurrentTextView:_firstNameTextField];
+    }
+    if([_lastNameTextField isFirstResponder]) {
+         frame.origin.y = -[self adjustFrameOriginOfViewFromKeyboard:keyboard andCurrentTextView:_lastNameTextField];
+    }
+    [self.view setFrame:frame];
+}
+
+-(void)keyboardWillHide {
+    CGRect frame = self.view.frame;
+    frame.origin.y = 0;
+    [self.view setFrame:frame];
+}
+
+-(CGFloat) adjustFrameOriginOfViewFromKeyboard:(CGRect)keyboard andCurrentTextView:(UITextField *)textField {
+    CGFloat textFieldY = textField.frame.origin.y;
+    CGFloat frameHeight = self.view.frame.size.height;
+    CGFloat keyboardHeight = keyboard.size.height;
+    if ( frameHeight < (keyboardHeight + textFieldY)) {
+         return (55 + (keyboardHeight + textFieldY + textField.frame.size.height) - frameHeight);
+    } else return 0;
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
 
 - (IBAction) buttonPressed:(UIButton *)sender {
     
